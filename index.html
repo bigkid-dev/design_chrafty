@@ -1,0 +1,2522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artisan App — Auth Screens</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── GLOBAL TOKENS (matches main file exactly) ── */
+      :root {
+        --amber: #ff8c00;
+        --amber-lt: #ffb347;
+        --amber-dk: #c46200;
+        --teal: #00897b;
+        --teal-lt: #4db6ac;
+        --teal-dk: #00574b;
+        --neutral-00: #ffffff;
+        --neutral-05: #f7f8fa;
+        --neutral-10: #edeef2;
+        --neutral-20: #d5d7e0;
+        --neutral-40: #9699a8;
+        --neutral-60: #5c5f70;
+        --neutral-80: #2a2c38;
+        --neutral-95: #13141a;
+        --success: #2ecc71;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.18);
+        --r-sm: 12px;
+        --r-md: 20px;
+        --r-lg: 28px;
+        --r-xl: 40px;
+        --font-head: "Sora", sans-serif;
+        --font-body: "Plus Jakarta Sans", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #e8eaf0;
+        font-family: var(--font-body);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 48px;
+        padding: 48px 24px 80px;
+      }
+
+      /* ── CANVAS LABEL ── */
+      .screen-label {
+        font-family: var(--font-head);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--neutral-40);
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      /* ── SECTION DIVIDER ── */
+      .section-divider {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 1300px;
+      }
+      .divider-line {
+        flex: 1;
+        height: 1px;
+        background: #c4c6d2;
+      }
+      .divider-label {
+        font-family: var(--font-head);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--neutral-40);
+        white-space: nowrap;
+      }
+
+      /* ── PHONE ROW ── */
+      .phone-row {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      /* ── PHONE SHELL ── */
+      .phone {
+        width: 390px;
+        min-height: 844px;
+        background: var(--neutral-00);
+        border-radius: 48px;
+        overflow: hidden;
+        box-shadow:
+          var(--shadow-lg),
+          0 0 0 8px #fff,
+          0 0 0 10px #d0d2db;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .phone.dark {
+        background: #060f0e;
+        box-shadow:
+          var(--shadow-lg),
+          0 0 0 8px #1a2a28,
+          0 0 0 10px #0a1a18;
+      }
+
+      /* STATUS BAR */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 28px 0;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--neutral-80);
+        flex-shrink: 0;
+      }
+      .status-bar.on-dark {
+        color: var(--neutral-00);
+      }
+      .status-bar.on-teal {
+        background: var(--teal-dk);
+        color: var(--neutral-00);
+      }
+      .status-bar.on-deep {
+        background: #001a17;
+        color: #e8f5f3;
+      }
+      .status-icons {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .status-icons svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* NOTCH */
+      .notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 34px;
+        background: var(--neutral-95);
+        border-radius: 0 0 20px 20px;
+        z-index: 10;
+      }
+
+      /* HOME BAR */
+      .home-bar {
+        width: 134px;
+        height: 5px;
+        background: var(--neutral-20);
+        border-radius: 3px;
+        margin: 12px auto 8px;
+        flex-shrink: 0;
+      }
+      .home-bar.dark {
+        background: #1a4a44;
+      }
+
+      /* ════════════════════════════════════════
+         SHARED AUTH COMPONENTS
+      ════════════════════════════════════════ */
+
+      /* Top hero band (light) */
+      .auth-band {
+        background: var(--teal-dk);
+        padding: 20px 24px 36px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .auth-band-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .auth-band-inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Top hero band (dark) */
+      .auth-band-dark {
+        background: linear-gradient(160deg, #001a17 0%, #0d2b28 100%);
+        padding: 20px 24px 36px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid #1a4a44;
+        flex-shrink: 0;
+      }
+
+      /* Form card (light) */
+      .auth-card {
+        background: var(--neutral-00);
+        border-radius: var(--r-xl) var(--r-xl) 0 0;
+        margin-top: -24px;
+        flex: 1;
+        padding: 32px 24px 24px;
+        position: relative;
+        z-index: 2;
+        overflow-y: auto;
+      }
+
+      /* Form card (dark) */
+      .auth-card-dark {
+        background: #0f2e2a;
+        border-radius: var(--r-xl) var(--r-xl) 0 0;
+        margin-top: -24px;
+        flex: 1;
+        padding: 32px 24px 24px;
+        position: relative;
+        z-index: 2;
+        overflow-y: auto;
+      }
+
+      /* Back button */
+      .btn-back {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+      .btn-back.dark {
+        background: rgba(77, 182, 172, 0.12);
+        border: 1px solid #1a4a44;
+        color: #7abdb8;
+      }
+
+      /* Screen headings in band */
+      .band-title {
+        font-family: var(--font-head);
+        font-size: 26px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+      .band-title.dark {
+        color: #e8f5f3;
+      }
+      .band-sub {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .band-sub.dark {
+        color: #7abdb8;
+      }
+
+      /* Step progress dots */
+      .step-dots {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .sd {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        flex-shrink: 0;
+      }
+      .sd.done {
+        background: rgba(255, 255, 255, 0.6);
+      }
+      .sd.active {
+        width: 24px;
+        height: 8px;
+        border-radius: 4px;
+        background: #fff;
+      }
+      .sd.dk-done {
+        background: var(--teal-lt);
+      }
+      .sd.dk-active {
+        width: 24px;
+        height: 8px;
+        border-radius: 4px;
+        background: var(--teal);
+      }
+      .sd.dk-todo {
+        background: #1a4a44;
+      }
+
+      /* Role toggle */
+      .role-toggle {
+        display: flex;
+        background: var(--neutral-10);
+        border-radius: var(--r-sm);
+        padding: 4px;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+      .role-toggle.dark {
+        background: #0a1a18;
+      }
+      .role-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--neutral-60);
+        cursor: pointer;
+      }
+      .role-btn.active {
+        background: var(--teal-dk);
+        color: #fff;
+        box-shadow: 0 3px 10px rgba(0, 87, 75, 0.3);
+      }
+      .role-btn.dark {
+        color: #3a6a65;
+      }
+      .role-btn.active.dark {
+        background: var(--teal);
+      }
+
+      /* Input group */
+      .inp-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 16px;
+      }
+      .inp-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--neutral-60);
+        letter-spacing: 0.5px;
+      }
+      .inp-label.dark {
+        color: #7abdb8;
+      }
+      .inp-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Base input */
+      .inp {
+        width: 100%;
+        background: var(--neutral-05);
+        border: 1.5px solid var(--neutral-10);
+        border-radius: var(--r-sm);
+        padding: 14px 16px;
+        font-family: var(--font-body);
+        font-size: 14px;
+        color: var(--neutral-80);
+        outline: none;
+      }
+      .inp.focused {
+        border-color: var(--teal);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.1);
+      }
+      .inp.with-icon {
+        padding-left: 42px;
+      }
+      .inp.dark {
+        background: #0d2b28;
+        border-color: #1a4a44;
+        color: #c8dbd8;
+      }
+      .inp.dark.focused {
+        border-color: var(--teal-lt);
+        box-shadow: 0 0 0 4px rgba(77, 182, 172, 0.12);
+      }
+      .inp-icon {
+        position: absolute;
+        left: 14px;
+        font-size: 16px;
+        color: var(--neutral-40);
+        pointer-events: none;
+      }
+      .inp-icon.dark {
+        color: #3a6a65;
+      }
+      .inp-suffix {
+        position: absolute;
+        right: 14px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--teal);
+        cursor: pointer;
+      }
+      .inp-suffix.dark {
+        color: var(--teal-lt);
+      }
+      .inp-badge {
+        position: absolute;
+        right: 12px;
+        width: 18px;
+        height: 18px;
+        background: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* Password strength */
+      .strength-bars {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+      }
+      .sbar {
+        flex: 1;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--neutral-10);
+      }
+      .sbar.s4 {
+        background: var(--success);
+      }
+      .strength-lbl {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--teal-lt);
+        text-align: right;
+        margin-top: 4px;
+      }
+
+      /* Checkbox */
+      .chk-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .chk-box {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: none;
+        background: var(--teal-dk);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+        font-size: 11px;
+        color: #fff;
+        font-weight: 700;
+      }
+      .chk-box.dark {
+        background: var(--teal);
+      }
+      .chk-text {
+        font-size: 12px;
+        color: var(--neutral-60);
+        line-height: 1.5;
+      }
+      .chk-text.dark {
+        color: #7abdb8;
+      }
+      .chk-text a {
+        color: var(--teal-dk);
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .chk-text.dark a {
+        color: var(--teal-lt);
+      }
+
+      /* Primary button */
+      .btn-primary {
+        width: 100%;
+        background: var(--teal-dk);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 16px;
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0, 87, 75, 0.35);
+        margin-bottom: 12px;
+      }
+      .btn-primary.dark {
+        background: var(--teal);
+        box-shadow: 0 8px 24px rgba(0, 137, 123, 0.4);
+      }
+
+      /* Ghost button */
+      .btn-ghost {
+        width: 100%;
+        background: transparent;
+        color: var(--teal-dk);
+        border: 2px solid var(--teal-dk);
+        border-radius: 50px;
+        padding: 14px;
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 12px;
+      }
+      .btn-ghost.dark {
+        color: #7abdb8;
+        border-color: #1a4a44;
+      }
+
+      /* Social button */
+      .btn-social {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        background: var(--neutral-00);
+        border: 1.5px solid var(--neutral-10);
+        border-radius: 50px;
+        padding: 13px;
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--neutral-80);
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+      .btn-social.dark {
+        background: #0d2b28;
+        border-color: #1a4a44;
+        color: #c8dbd8;
+      }
+
+      /* Divider */
+      .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 4px 0 16px;
+      }
+      .div-line {
+        flex: 1;
+        height: 1px;
+        background: var(--neutral-10);
+      }
+      .div-line.dark {
+        background: #1a4a44;
+      }
+      .div-text {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--neutral-40);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .div-text.dark {
+        color: #3a6a65;
+      }
+
+      /* Footer link text */
+      .auth-footer {
+        text-align: center;
+        font-size: 13px;
+        color: var(--neutral-60);
+        margin-top: 4px;
+      }
+      .auth-footer.dark {
+        color: #7abdb8;
+      }
+      .auth-footer a {
+        color: var(--teal-dk);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .auth-footer.dark a {
+        color: var(--teal-lt);
+      }
+
+      /* OTP boxes */
+      .otp-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      .otp-box {
+        width: 50px;
+        height: 58px;
+        background: var(--neutral-05);
+        border: 2px solid var(--neutral-10);
+        border-radius: var(--r-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-head);
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--teal-dk);
+      }
+      .otp-box.filled {
+        border-color: var(--teal);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.1);
+      }
+      .otp-box.active {
+        border-color: var(--amber);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.12);
+      }
+      .otp-box.dark {
+        background: #0d2b28;
+        border-color: #1a4a44;
+        color: var(--teal-lt);
+      }
+      .otp-box.dark.filled {
+        border-color: var(--teal-lt);
+        background: #0f3530;
+        box-shadow: 0 0 0 4px rgba(77, 182, 172, 0.12);
+      }
+      .otp-box.dark.active {
+        border-color: var(--amber);
+        background: #1a2a18;
+        box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
+      }
+
+      /* Country code chip */
+      .cc-chip {
+        background: var(--neutral-05);
+        border: 1.5px solid var(--neutral-10);
+        border-radius: var(--r-sm);
+        padding: 14px 12px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--neutral-80);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .cc-chip.dark {
+        background: #0d2b28;
+        border-color: #1a4a44;
+        color: #c8dbd8;
+      }
+
+      /* Trust pills */
+      .trust-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .tpill {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0, 87, 75, 0.08);
+        border: 1px solid rgba(0, 87, 75, 0.15);
+        border-radius: 50px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--teal-dk);
+      }
+      .tpill.dark {
+        background: rgba(77, 182, 172, 0.1);
+        border-color: rgba(77, 182, 172, 0.2);
+        color: var(--teal-lt);
+      }
+
+      /* Info box */
+      .info-box {
+        background: rgba(0, 87, 75, 0.06);
+        border: 1px solid rgba(0, 87, 75, 0.12);
+        border-radius: var(--r-md);
+        padding: 14px 16px;
+        margin-bottom: 24px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .info-box.dark {
+        background: rgba(77, 182, 172, 0.07);
+        border-color: #1a4a44;
+      }
+      .info-box-text {
+        font-size: 12px;
+        color: var(--neutral-60);
+        line-height: 1.5;
+      }
+      .info-box-text.dark {
+        color: #7abdb8;
+      }
+      .info-box-text strong {
+        color: var(--teal-dk);
+      }
+      .info-box-text.dark strong {
+        color: var(--teal-lt);
+      }
+
+      /* Biometric prompt */
+      .biometric-hint {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 87, 75, 0.06);
+        border: 1px solid rgba(0, 87, 75, 0.12);
+        border-radius: var(--r-md);
+        padding: 14px 16px;
+        margin-top: 4px;
+      }
+      .biometric-hint.dark {
+        background: rgba(77, 182, 172, 0.08);
+        border-color: #1a4a44;
+      }
+      .biometric-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0d2b28;
+      }
+      .biometric-title.dark {
+        color: #e8f5f3;
+      }
+      .biometric-sub {
+        font-size: 11px;
+        color: var(--neutral-60);
+        margin-top: 2px;
+      }
+      .biometric-sub.dark {
+        color: #7abdb8;
+      }
+      .biometric-cta {
+        margin-left: auto;
+        background: var(--teal-dk);
+        border-radius: 50px;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 12px;
+        white-space: nowrap;
+        border: none;
+        cursor: pointer;
+      }
+      .biometric-cta.dark {
+        background: var(--teal);
+      }
+
+      /* Success state */
+      .success-box {
+        margin-top: 12px;
+        background: rgba(46, 204, 113, 0.08);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: var(--r-md);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .success-box.dark {
+        background: rgba(46, 204, 113, 0.07);
+      }
+      .success-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0d2b28;
+      }
+      .success-title.dark {
+        color: #e8f5f3;
+      }
+      .success-sub {
+        font-size: 11px;
+        color: var(--neutral-60);
+        margin-top: 2px;
+      }
+      .success-sub.dark {
+        color: #7abdb8;
+      }
+
+      /* Forgot password method tabs */
+      .method-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        gap: 6px;
+      }
+      .method-tab {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+      }
+      .method-tab.active {
+        background: var(--teal-dk);
+        color: #fff;
+      }
+      .method-tab.inactive {
+        background: var(--neutral-10);
+        color: var(--neutral-60);
+      }
+      .method-tab.active.dark {
+        background: var(--teal);
+      }
+      .method-tab.inactive.dark {
+        background: #0a1a18;
+        color: #3a6a65;
+        border: 1px solid #1a4a44;
+      }
+
+      /* Trade pill chips */
+      .trade-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .trade-chip {
+        padding: 7px 14px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+      }
+      .trade-chip.selected {
+        background: var(--teal-dk);
+        color: #fff;
+      }
+      .trade-chip.idle {
+        background: var(--neutral-10);
+        color: var(--neutral-60);
+      }
+      .trade-chip.selected.dark {
+        background: var(--teal);
+        color: #fff;
+      }
+      .trade-chip.idle.dark {
+        background: #0a1a18;
+        color: #3a6a65;
+        border: 1px solid #1a4a44;
+      }
+
+      /* NIN upload box */
+      .upload-box {
+        border: 2px dashed var(--neutral-20);
+        border-radius: var(--r-md);
+        padding: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .upload-box.dark {
+        border-color: #1a4a44;
+      }
+      .upload-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--neutral-80);
+        margin-bottom: 4px;
+      }
+      .upload-title.dark {
+        color: #c8dbd8;
+      }
+      .upload-sub {
+        font-size: 11px;
+        color: var(--neutral-40);
+      }
+      .upload-sub.dark {
+        color: #3a6a65;
+      }
+      .upload-btn {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 18px;
+        border-radius: 50px;
+        background: var(--neutral-10);
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--teal-dk);
+      }
+      .upload-btn.dark {
+        background: #0a1a18;
+        color: var(--teal-lt);
+      }
+
+      /* Section header with line */
+      .form-section-head {
+        font-family: var(--font-head);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--neutral-40);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .form-section-head::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--neutral-10);
+      }
+      .form-section-head.dark {
+        color: #3a6a65;
+      }
+      .form-section-head.dark::after {
+        background: #1a4a44;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: LIGHT MODE AUTH
+    ══════════════════════════════════════════════════════ -->
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">✦ Auth Flow — Light Mode</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ROW 1: Welcome · Sign In · Create Account -->
+    <div class="phone-row">
+      <!-- ── A1: AUTH LANDING (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A1 — Welcome</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div
+            class="status-bar on-dark"
+            style="background: #003d35; padding-top: 18px"
+          >
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"
+                  fill="white"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Hero gradient area -->
+          <div
+            style="
+              background: linear-gradient(
+                160deg,
+                #003d35 0%,
+                #00574b 45%,
+                #00897b 80%,
+                #ff8c00 130%
+              );
+              padding: 36px 28px 52px;
+              position: relative;
+              overflow: hidden;
+              min-height: 360px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                width: 280px;
+                height: 280px;
+                top: -80px;
+                right: -90px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.05);
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                bottom: 10px;
+                left: -60px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.05);
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                top: 60px;
+                left: 20px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.04);
+              "
+            ></div>
+            <!-- SVG Petal Logo -->
+            <svg
+              width="72"
+              height="72"
+              viewBox="0 0 64 64"
+              fill="none"
+              style="margin-bottom: 14px"
+            >
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#00897B"
+                opacity="0.95"
+                transform="rotate(0 32 32)"
+              />
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#26C6DA"
+                opacity="0.88"
+                transform="rotate(120 32 32)"
+              />
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#FFB300"
+                opacity="0.88"
+                transform="rotate(240 32 32)"
+              />
+              <circle cx="32" cy="32" r="10" fill="#ffffff" />
+              <circle cx="32" cy="32" r="7" fill="#00574B" />
+              <circle cx="32" cy="32" r="3" fill="#FF8C00" />
+            </svg>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 30px;
+                font-weight: 700;
+                color: #fff;
+                letter-spacing: -0.5px;
+                margin-bottom: 6px;
+              "
+            >
+              Artisan<span style="color: #ffb347">.</span>
+            </div>
+            <div
+              style="
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.72);
+                text-align: center;
+                line-height: 1.6;
+                max-width: 240px;
+              "
+            >
+              Your trusted marketplace for skilled<br />tradespeople & artisans
+              near you
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div
+            style="
+              flex: 1;
+              padding: 28px 24px 0;
+              display: flex;
+              flex-direction: column;
+              background: var(--neutral-05);
+            "
+          >
+            <div class="trust-pills">
+              <div class="tpill">⭐ 50K+ Artisans</div>
+              <div class="tpill">🔒 Escrow Pay</div>
+              <div class="tpill">✅ Verified Pros</div>
+            </div>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 22px;
+                font-weight: 700;
+                color: #0d2b28;
+                line-height: 1.3;
+                margin-bottom: 6px;
+              "
+            >
+              Connect with skilled<br />artisans, instantly.
+            </div>
+            <div
+              style="
+                font-size: 13px;
+                color: var(--neutral-60);
+                line-height: 1.65;
+                margin-bottom: 24px;
+              "
+            >
+              Find vetted carpenters, electricians, plumbers & more. Book, pay,
+              and review — all in one place.
+            </div>
+            <button class="btn-primary">Create an Account</button>
+            <button class="btn-ghost">Sign In to Artisan</button>
+            <div class="auth-divider" style="margin-top: 4px">
+              <div class="div-line"></div>
+              <div class="div-text">Or continue with</div>
+              <div class="div-line"></div>
+            </div>
+            <div style="display: flex; gap: 10px">
+              <button
+                class="btn-social"
+                style="
+                  flex: 1;
+                  margin-bottom: 0;
+                  font-size: 13px;
+                  padding: 11px;
+                "
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  />
+                </svg>
+                Google
+              </button>
+              <button
+                class="btn-social"
+                style="
+                  flex: 1;
+                  margin-bottom: 0;
+                  font-size: 13px;
+                  padding: 11px;
+                "
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="#000">
+                  <path
+                    d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.42c1.42.07 2.4.83 3.22.84.98-.17 1.9-.97 3.28-.89 1.35.1 2.38.71 3.05 1.8-2.78 1.66-2.31 5.37.63 6.57-.68 1.8-1.56 3.58-2.18 4.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
+                  />
+                </svg>
+                Apple
+              </button>
+            </div>
+            <div class="auth-footer" style="margin-top: 16px">
+              Already a member? <a href="#">Sign In</a>
+            </div>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- ── A2: SIGN IN (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A2 — Sign In</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="status-bar on-teal" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band">
+            <div
+              class="auth-band-circle"
+              style="width: 220px; height: 220px; top: -70px; right: -70px"
+            ></div>
+            <div
+              class="auth-band-circle"
+              style="width: 100px; height: 100px; bottom: -20px; left: 40px"
+            ></div>
+            <div class="auth-band-inner">
+              <button class="btn-back">←</button>
+              <div class="band-title">Welcome back 👋</div>
+              <div class="band-sub">Sign in to continue to Artisan</div>
+            </div>
+          </div>
+          <div class="auth-card">
+            <div class="role-toggle">
+              <button class="role-btn active">I'm a Customer</button>
+              <button class="role-btn">I'm an Artisan</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">✉️</span>
+                <input
+                  class="inp with-icon focused"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+                <span class="inp-badge">✓</span>
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Password</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">🔒</span>
+                <input
+                  class="inp with-icon"
+                  type="password"
+                  value="securepass123"
+                  readonly
+                />
+                <span class="inp-suffix">Show</span>
+              </div>
+            </div>
+            <div
+              style="text-align: right; margin-bottom: 24px; margin-top: -8px"
+            >
+              <a
+                href="#"
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: var(--amber);
+                  text-decoration: none;
+                "
+                >Forgot Password?</a
+              >
+            </div>
+            <button class="btn-primary">Sign In →</button>
+            <div class="auth-divider">
+              <div class="div-line"></div>
+              <div class="div-text">Or sign in with</div>
+              <div class="div-line"></div>
+            </div>
+            <button class="btn-social">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                /></svg
+              >Continue with Google
+            </button>
+            <button class="btn-social">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#000">
+                <path
+                  d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.42c1.42.07 2.4.83 3.22.84.98-.17 1.9-.97 3.28-.89 1.35.1 2.38.71 3.05 1.8-2.78 1.66-2.31 5.37.63 6.57-.68 1.8-1.56 3.58-2.18 4.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
+                /></svg
+              >Continue with Apple
+            </button>
+            <div class="auth-footer">
+              Don't have an account? <a href="#">Create one</a>
+            </div>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- ── A3: CREATE ACCOUNT (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A3 — Create Account</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="status-bar on-teal" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band" style="padding-bottom: 32px">
+            <div
+              class="auth-band-circle"
+              style="width: 220px; height: 220px; top: -70px; right: -70px"
+            ></div>
+            <div class="auth-band-inner">
+              <button class="btn-back">←</button>
+              <div class="step-dots" style="margin-bottom: 14px">
+                <div class="sd done"></div>
+                <div class="sd active"></div>
+                <div class="sd"></div>
+              </div>
+              <div class="band-title">Join Artisan 🎉</div>
+              <div class="band-sub">Step 2 of 3 · Personal details</div>
+            </div>
+          </div>
+          <div class="auth-card">
+            <div class="role-toggle">
+              <button class="role-btn active">Customer</button>
+              <button class="role-btn">Artisan</button>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+              "
+            >
+              <div>
+                <div class="inp-label" style="margin-bottom: 4px">
+                  First Name
+                </div>
+                <input class="inp" value="Adaeze" readonly />
+              </div>
+              <div>
+                <div class="inp-label" style="margin-bottom: 4px">
+                  Last Name
+                </div>
+                <input class="inp focused" value="Obi" readonly />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Phone Number</div>
+              <div style="display: flex; gap: 8px">
+                <div class="cc-chip">🇳🇬 +234</div>
+                <input
+                  class="inp"
+                  style="flex: 1"
+                  value="0803 456 7890"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">✉️</span>
+                <input
+                  class="inp with-icon"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Create Password</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">🔒</span>
+                <input
+                  class="inp with-icon"
+                  type="password"
+                  value="StrongPass123!"
+                  readonly
+                />
+                <span class="inp-suffix">Hide</span>
+              </div>
+              <div class="strength-bars">
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+              </div>
+              <div class="strength-lbl">Strong ✓</div>
+            </div>
+            <div class="chk-row">
+              <div class="chk-box">✓</div>
+              <div class="chk-text">
+                I agree to the <a href="#">Terms of Service</a> and
+                <a href="#">Privacy Policy</a> of Artisan
+              </div>
+            </div>
+            <button class="btn-primary">Continue →</button>
+            <div class="auth-footer">
+              Already a member? <a href="#">Sign In</a>
+            </div>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div>
+    <!-- end row 1 -->
+
+    <!-- ROW 2: OTP · Reset Password · Artisan Onboarding -->
+    <div class="phone-row">
+      <!-- ── A4: OTP VERIFICATION (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A4 — OTP Verification</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="status-bar on-teal" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band" style="padding-bottom: 36px">
+            <div
+              class="auth-band-circle"
+              style="width: 200px; height: 200px; top: -60px; right: -60px"
+            ></div>
+            <div class="auth-band-inner">
+              <button class="btn-back">←</button>
+              <div style="font-size: 38px; margin-bottom: 10px">📱</div>
+              <div class="band-title">Verify your number</div>
+              <div class="band-sub">Code sent to +234 0803 456 7890</div>
+            </div>
+          </div>
+          <div class="auth-card">
+            <div
+              class="step-dots"
+              style="justify-content: center; margin-bottom: 18px"
+            >
+              <div class="sd done"></div>
+              <div class="sd done"></div>
+              <div class="sd active"></div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 13px;
+                color: var(--neutral-60);
+                line-height: 1.6;
+                margin-bottom: 4px;
+              "
+            >
+              Enter the 6-digit code we sent<br />to your mobile number
+            </div>
+            <div class="otp-row">
+              <div class="otp-box filled">7</div>
+              <div class="otp-box filled">4</div>
+              <div class="otp-box filled">3</div>
+              <div class="otp-box active">_</div>
+              <div class="otp-box"></div>
+              <div class="otp-box"></div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 12px;
+                color: var(--neutral-40);
+                margin-bottom: 24px;
+              "
+            >
+              Didn't receive it?
+              <span style="color: var(--teal-dk); font-weight: 700"
+                >Resend code</span
+              >
+              in 00:42
+            </div>
+            <button class="btn-primary">Verify & Continue</button>
+            <div class="biometric-hint">
+              <div style="font-size: 28px">🤙</div>
+              <div>
+                <div class="biometric-title">Enable Face ID?</div>
+                <div class="biometric-sub">
+                  Log in faster next time with biometrics
+                </div>
+              </div>
+              <button class="biometric-cta">Enable</button>
+            </div>
+            <div class="auth-footer" style="margin-top: 20px">
+              Wrong number? <a href="#">Change it</a>
+            </div>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- ── A5: RESET PASSWORD (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A5 — Reset Password</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="status-bar on-teal" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band" style="padding-bottom: 36px">
+            <div
+              class="auth-band-circle"
+              style="width: 200px; height: 200px; top: -60px; right: -60px"
+            ></div>
+            <div class="auth-band-inner">
+              <button class="btn-back">←</button>
+              <div style="font-size: 38px; margin-bottom: 10px">🔐</div>
+              <div class="band-title">Reset Password</div>
+              <div class="band-sub">
+                We'll send a recovery link to your email
+              </div>
+            </div>
+          </div>
+          <div class="auth-card">
+            <div class="method-tabs">
+              <button class="method-tab active">📧 Email</button>
+              <button class="method-tab inactive">📱 SMS</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">✉️</span>
+                <input
+                  class="inp with-icon focused"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="info-box">
+              <div style="font-size: 18px; flex-shrink: 0">ℹ️</div>
+              <div class="info-box-text">
+                A password reset link will be sent to this address. The link
+                expires in <strong>15 minutes</strong>.
+              </div>
+            </div>
+            <button class="btn-primary">Send Reset Link →</button>
+            <button class="btn-ghost">Cancel</button>
+            <div class="success-box">
+              <div style="font-size: 24px">✅</div>
+              <div>
+                <div class="success-title">Email sent!</div>
+                <div class="success-sub">Check your inbox and spam folder</div>
+              </div>
+            </div>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- ── A6: ARTISAN ONBOARDING (LIGHT) ── -->
+      <div>
+        <div class="screen-label">A6 — Artisan Onboarding</div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="status-bar on-teal" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="white">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect x="16" y="10" width="3" height="4" rx="1" fill="white" />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="white" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band" style="padding-bottom: 32px">
+            <div
+              class="auth-band-circle"
+              style="width: 200px; height: 200px; top: -60px; right: -60px"
+            ></div>
+            <div class="auth-band-inner">
+              <button class="btn-back">←</button>
+              <div class="step-dots" style="margin-bottom: 14px">
+                <div class="sd done"></div>
+                <div class="sd done"></div>
+                <div class="sd active"></div>
+                <div class="sd"></div>
+              </div>
+              <div class="band-title">Your Trade 🔧</div>
+              <div class="band-sub">Step 3 of 4 · Tell us what you do</div>
+            </div>
+          </div>
+          <div class="auth-card">
+            <div class="form-section-head">Primary Skill</div>
+            <div class="inp-group">
+              <div class="inp-label">Trade / Skill</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">🔨</span>
+                <input
+                  class="inp with-icon focused"
+                  value="Carpenter"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="trade-chips">
+              <button class="trade-chip selected">🪚 Carpenter</button>
+              <button class="trade-chip idle">⚡ Electrician</button>
+              <button class="trade-chip idle">🔧 Plumber</button>
+              <button class="trade-chip idle">🎨 Painter</button>
+              <button class="trade-chip idle">🏗️ Mason</button>
+              <button class="trade-chip idle">🧹 Cleaner</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Years of Experience</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">📅</span>
+                <input class="inp with-icon" value="7 years" readonly />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label">Operating Area</div>
+              <div class="inp-wrap">
+                <span class="inp-icon">📍</span>
+                <input class="inp with-icon" value="Ikeja, Lagos" readonly />
+              </div>
+            </div>
+            <div class="upload-box">
+              <div style="font-size: 28px; margin-bottom: 8px">🪪</div>
+              <div class="upload-title">Upload NIN / CAC Document</div>
+              <div class="upload-sub">
+                For identity verification · JPG, PDF · max 5MB
+              </div>
+              <div class="upload-btn">Choose file</div>
+            </div>
+            <button class="btn-primary">Continue →</button>
+          </div>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div>
+    <!-- end row 2 -->
+
+    <!-- ══════════════════════════════════════════════════════
+         SECTION: DARK MODE AUTH
+    ══════════════════════════════════════════════════════ -->
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">✦ Auth Flow — Dark Mode</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ROW 3: Welcome · Sign In · Create Account (DARK) -->
+    <div class="phone-row">
+      <!-- ── B1: AUTH LANDING (DARK) ── -->
+      <div>
+        <div class="screen-label">B1 — Welcome (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"
+                  fill="#e8f5f3"
+                />
+              </svg>
+            </div>
+          </div>
+          <!-- Dark hero -->
+          <div
+            style="
+              background: linear-gradient(
+                160deg,
+                #001a17 0%,
+                #0d2b28 60%,
+                #0f3530 100%
+              );
+              padding: 36px 28px 52px;
+              position: relative;
+              overflow: hidden;
+              min-height: 360px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              border-bottom: 1px solid #1a4a44;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                width: 260px;
+                height: 260px;
+                top: -70px;
+                right: -80px;
+                border-radius: 50%;
+                background: rgba(77, 182, 172, 0.06);
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                width: 180px;
+                height: 180px;
+                bottom: 10px;
+                left: -50px;
+                border-radius: 50%;
+                background: rgba(255, 179, 0, 0.04);
+              "
+            ></div>
+            <svg
+              width="72"
+              height="72"
+              viewBox="0 0 64 64"
+              fill="none"
+              style="margin-bottom: 14px"
+            >
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#00897B"
+                opacity="0.95"
+                transform="rotate(0 32 32)"
+              />
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#26C6DA"
+                opacity="0.9"
+                transform="rotate(120 32 32)"
+              />
+              <ellipse
+                cx="32"
+                cy="16"
+                rx="9"
+                ry="14"
+                fill="#FFB300"
+                opacity="0.9"
+                transform="rotate(240 32 32)"
+              />
+              <circle cx="32" cy="32" r="10" fill="#0f2e2a" />
+              <circle cx="32" cy="32" r="10" fill="white" opacity="0.08" />
+              <circle cx="32" cy="32" r="7" fill="#00574B" />
+              <circle cx="32" cy="32" r="3" fill="#FF8C00" />
+            </svg>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 30px;
+                font-weight: 700;
+                color: #e8f5f3;
+                letter-spacing: -0.5px;
+                margin-bottom: 6px;
+              "
+            >
+              Artisan<span style="color: #ffb300">.</span>
+            </div>
+            <div
+              style="
+                font-size: 13px;
+                color: rgba(200, 219, 216, 0.65);
+                text-align: center;
+                line-height: 1.6;
+                max-width: 240px;
+              "
+            >
+              Your trusted marketplace for skilled<br />tradespeople & artisans
+              near you
+            </div>
+          </div>
+          <!-- Dark body -->
+          <div
+            style="
+              flex: 1;
+              padding: 28px 24px 0;
+              display: flex;
+              flex-direction: column;
+              background: #060f0e;
+            "
+          >
+            <div class="trust-pills">
+              <div class="tpill dark">⭐ 50K+ Artisans</div>
+              <div class="tpill dark">🔒 Escrow Pay</div>
+              <div class="tpill dark">✅ Verified Pros</div>
+            </div>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 22px;
+                font-weight: 700;
+                color: #e8f5f3;
+                line-height: 1.3;
+                margin-bottom: 6px;
+              "
+            >
+              Connect with skilled<br />artisans, instantly.
+            </div>
+            <div
+              style="
+                font-size: 13px;
+                color: #7abdb8;
+                line-height: 1.65;
+                margin-bottom: 24px;
+              "
+            >
+              Find vetted carpenters, electricians, plumbers & more. Book, pay,
+              and review — all in one place.
+            </div>
+            <button class="btn-primary dark">Create an Account</button>
+            <button class="btn-ghost dark">Sign In to Artisan</button>
+            <div class="auth-divider" style="margin-top: 4px">
+              <div class="div-line dark"></div>
+              <div class="div-text dark">Or continue with</div>
+              <div class="div-line dark"></div>
+            </div>
+            <div style="display: flex; gap: 10px">
+              <button
+                class="btn-social dark"
+                style="
+                  flex: 1;
+                  margin-bottom: 0;
+                  font-size: 13px;
+                  padding: 11px;
+                "
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  /></svg
+                >Google
+              </button>
+              <button
+                class="btn-social dark"
+                style="
+                  flex: 1;
+                  margin-bottom: 0;
+                  font-size: 13px;
+                  padding: 11px;
+                "
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="#e8f5f3">
+                  <path
+                    d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.42c1.42.07 2.4.83 3.22.84.98-.17 1.9-.97 3.28-.89 1.35.1 2.38.71 3.05 1.8-2.78 1.66-2.31 5.37.63 6.57-.68 1.8-1.56 3.58-2.18 4.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
+                  /></svg
+                >Apple
+              </button>
+            </div>
+            <div class="auth-footer dark" style="margin-top: 16px">
+              Already a member? <a href="#">Sign In</a>
+            </div>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+
+      <!-- ── B2: SIGN IN (DARK) ── -->
+      <div>
+        <div class="screen-label">B2 — Sign In (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band-dark">
+            <div
+              style="
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                top: -60px;
+                right: -60px;
+                border-radius: 50%;
+                background: rgba(77, 182, 172, 0.05);
+              "
+            ></div>
+            <div style="position: relative; z-index: 1">
+              <button class="btn-back dark">←</button>
+              <div class="band-title dark">Welcome back 👋</div>
+              <div class="band-sub dark">Sign in to continue to Artisan</div>
+            </div>
+          </div>
+          <div class="auth-card-dark">
+            <div class="role-toggle dark">
+              <button class="role-btn active dark">I'm a Customer</button>
+              <button class="role-btn dark">I'm an Artisan</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">✉️</span>
+                <input
+                  class="inp with-icon dark focused"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+                <span class="inp-badge">✓</span>
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Password</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">🔒</span>
+                <input
+                  class="inp with-icon dark"
+                  type="password"
+                  value="securepass123"
+                  readonly
+                />
+                <span class="inp-suffix dark">Show</span>
+              </div>
+            </div>
+            <div
+              style="text-align: right; margin-bottom: 24px; margin-top: -8px"
+            >
+              <a
+                href="#"
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: #ffb300;
+                  text-decoration: none;
+                "
+                >Forgot Password?</a
+              >
+            </div>
+            <button class="btn-primary dark">Sign In →</button>
+            <div class="auth-divider">
+              <div class="div-line dark"></div>
+              <div class="div-text dark">Or sign in with</div>
+              <div class="div-line dark"></div>
+            </div>
+            <button class="btn-social dark">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                /></svg
+              >Continue with Google
+            </button>
+            <button class="btn-social dark">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#e8f5f3">
+                <path
+                  d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.42c1.42.07 2.4.83 3.22.84.98-.17 1.9-.97 3.28-.89 1.35.1 2.38.71 3.05 1.8-2.78 1.66-2.31 5.37.63 6.57-.68 1.8-1.56 3.58-2.18 4.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
+                /></svg
+              >Continue with Apple
+            </button>
+            <div class="auth-footer dark">
+              Don't have an account? <a href="#">Create one</a>
+            </div>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+
+      <!-- ── B3: CREATE ACCOUNT (DARK) ── -->
+      <div>
+        <div class="screen-label">B3 — Create Account (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band-dark" style="padding-bottom: 32px">
+            <div style="position: relative; z-index: 1">
+              <button class="btn-back dark">←</button>
+              <div class="step-dots" style="margin-bottom: 14px">
+                <div class="sd dk-done"></div>
+                <div class="sd dk-active"></div>
+                <div class="sd dk-todo"></div>
+              </div>
+              <div class="band-title dark">Join Artisan 🎉</div>
+              <div class="band-sub dark">Step 2 of 3 · Personal details</div>
+            </div>
+          </div>
+          <div class="auth-card-dark">
+            <div class="role-toggle dark">
+              <button class="role-btn active dark">Customer</button>
+              <button class="role-btn dark">Artisan</button>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+              "
+            >
+              <div>
+                <div class="inp-label dark" style="margin-bottom: 4px">
+                  First Name
+                </div>
+                <input class="inp dark" value="Adaeze" readonly />
+              </div>
+              <div>
+                <div class="inp-label dark" style="margin-bottom: 4px">
+                  Last Name
+                </div>
+                <input class="inp dark focused" value="Obi" readonly />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Phone Number</div>
+              <div style="display: flex; gap: 8px">
+                <div class="cc-chip dark">🇳🇬 +234</div>
+                <input
+                  class="inp dark"
+                  style="flex: 1"
+                  value="0803 456 7890"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">✉️</span>
+                <input
+                  class="inp with-icon dark"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Create Password</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">🔒</span>
+                <input
+                  class="inp with-icon dark"
+                  type="password"
+                  value="StrongPass123!"
+                  readonly
+                />
+                <span class="inp-suffix dark">Hide</span>
+              </div>
+              <div class="strength-bars">
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+                <div class="sbar s4"></div>
+              </div>
+              <div class="strength-lbl">Strong ✓</div>
+            </div>
+            <div class="chk-row">
+              <div class="chk-box dark">✓</div>
+              <div class="chk-text dark">
+                I agree to the <a href="#">Terms of Service</a> and
+                <a href="#">Privacy Policy</a> of Artisan
+              </div>
+            </div>
+            <button class="btn-primary dark">Continue →</button>
+            <div class="auth-footer dark">
+              Already a member? <a href="#">Sign In</a>
+            </div>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+    </div>
+    <!-- end row 3 -->
+
+    <!-- ROW 4: OTP · Reset Password · Artisan Onboarding (DARK) -->
+    <div class="phone-row">
+      <!-- ── B4: OTP (DARK) ── -->
+      <div>
+        <div class="screen-label">B4 — OTP Verification (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band-dark" style="padding-bottom: 36px">
+            <div style="position: relative; z-index: 1">
+              <button class="btn-back dark">←</button>
+              <div style="font-size: 38px; margin-bottom: 10px">📱</div>
+              <div class="band-title dark">Verify your number</div>
+              <div class="band-sub dark">Code sent to +234 0803 456 7890</div>
+            </div>
+          </div>
+          <div class="auth-card-dark">
+            <div
+              class="step-dots"
+              style="justify-content: center; margin-bottom: 18px"
+            >
+              <div class="sd dk-done"></div>
+              <div class="sd dk-done"></div>
+              <div class="sd dk-active"></div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 13px;
+                color: #7abdb8;
+                line-height: 1.6;
+                margin-bottom: 4px;
+              "
+            >
+              Enter the 6-digit code we sent<br />to your mobile number
+            </div>
+            <div class="otp-row">
+              <div class="otp-box dark filled">7</div>
+              <div class="otp-box dark filled">4</div>
+              <div class="otp-box dark filled">3</div>
+              <div class="otp-box dark active">_</div>
+              <div class="otp-box dark"></div>
+              <div class="otp-box dark"></div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 12px;
+                color: #3a6a65;
+                margin-bottom: 24px;
+              "
+            >
+              Didn't receive it?
+              <span style="color: var(--teal-lt); font-weight: 700"
+                >Resend code</span
+              >
+              in 00:42
+            </div>
+            <button class="btn-primary dark">Verify & Continue</button>
+            <div class="biometric-hint dark">
+              <div style="font-size: 28px">🤙</div>
+              <div>
+                <div class="biometric-title dark">Enable Face ID?</div>
+                <div class="biometric-sub dark">
+                  Log in faster next time with biometrics
+                </div>
+              </div>
+              <button class="biometric-cta dark">Enable</button>
+            </div>
+            <div class="auth-footer dark" style="margin-top: 20px">
+              Wrong number? <a href="#">Change it</a>
+            </div>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+
+      <!-- ── B5: RESET PASSWORD (DARK) ── -->
+      <div>
+        <div class="screen-label">B5 — Reset Password (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band-dark" style="padding-bottom: 36px">
+            <div style="position: relative; z-index: 1">
+              <button class="btn-back dark">←</button>
+              <div style="font-size: 38px; margin-bottom: 10px">🔐</div>
+              <div class="band-title dark">Reset Password</div>
+              <div class="band-sub dark">
+                We'll send a recovery link to your email
+              </div>
+            </div>
+          </div>
+          <div class="auth-card-dark">
+            <div class="method-tabs">
+              <button class="method-tab active dark">📧 Email</button>
+              <button class="method-tab inactive dark">📱 SMS</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Email Address</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">✉️</span>
+                <input
+                  class="inp with-icon dark focused"
+                  value="adaeze.obi@gmail.com"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="info-box dark">
+              <div style="font-size: 18px; flex-shrink: 0">ℹ️</div>
+              <div class="info-box-text dark">
+                A password reset link will be sent to this address. The link
+                expires in <strong>15 minutes</strong>.
+              </div>
+            </div>
+            <button class="btn-primary dark">Send Reset Link →</button>
+            <button class="btn-ghost dark">Cancel</button>
+            <div class="success-box dark">
+              <div style="font-size: 24px">✅</div>
+              <div>
+                <div class="success-title dark">Email sent!</div>
+                <div class="success-sub dark">
+                  Check your inbox and spam folder
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+
+      <!-- ── B6: ARTISAN ONBOARDING (DARK) ── -->
+      <div>
+        <div class="screen-label">B6 — Artisan Onboarding (Dark)</div>
+        <div class="phone dark">
+          <div class="notch"></div>
+          <div class="status-bar on-deep" style="padding-top: 18px">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg viewBox="0 0 24 24" fill="#e8f5f3">
+                <rect
+                  x="2"
+                  y="7"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="#e8f5f3"
+                  stroke-width="2"
+                />
+                <rect
+                  x="16"
+                  y="10"
+                  width="3"
+                  height="4"
+                  rx="1"
+                  fill="#e8f5f3"
+                />
+                <rect x="3" y="8" width="10" height="8" rx="1" fill="#e8f5f3" />
+              </svg>
+            </div>
+          </div>
+          <div class="auth-band-dark" style="padding-bottom: 32px">
+            <div style="position: relative; z-index: 1">
+              <button class="btn-back dark">←</button>
+              <div class="step-dots" style="margin-bottom: 14px">
+                <div class="sd dk-done"></div>
+                <div class="sd dk-done"></div>
+                <div class="sd dk-active"></div>
+                <div class="sd dk-todo"></div>
+              </div>
+              <div class="band-title dark">Your Trade 🔧</div>
+              <div class="band-sub dark">Step 3 of 4 · Tell us what you do</div>
+            </div>
+          </div>
+          <div class="auth-card-dark">
+            <div class="form-section-head dark">Primary Skill</div>
+            <div class="inp-group">
+              <div class="inp-label dark">Trade / Skill</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">🔨</span>
+                <input
+                  class="inp with-icon dark focused"
+                  value="Carpenter"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="trade-chips">
+              <button class="trade-chip selected dark">🪚 Carpenter</button>
+              <button class="trade-chip idle dark">⚡ Electrician</button>
+              <button class="trade-chip idle dark">🔧 Plumber</button>
+              <button class="trade-chip idle dark">🎨 Painter</button>
+              <button class="trade-chip idle dark">🏗️ Mason</button>
+              <button class="trade-chip idle dark">🧹 Cleaner</button>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Years of Experience</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">📅</span>
+                <input class="inp with-icon dark" value="7 years" readonly />
+              </div>
+            </div>
+            <div class="inp-group">
+              <div class="inp-label dark">Operating Area</div>
+              <div class="inp-wrap">
+                <span class="inp-icon dark">📍</span>
+                <input
+                  class="inp with-icon dark"
+                  value="Ikeja, Lagos"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="upload-box dark">
+              <div style="font-size: 28px; margin-bottom: 8px">🪪</div>
+              <div class="upload-title dark">Upload NIN / CAC Document</div>
+              <div class="upload-sub dark">
+                For identity verification · JPG, PDF · max 5MB
+              </div>
+              <div class="upload-btn dark">Choose file</div>
+            </div>
+            <button class="btn-primary dark">Continue →</button>
+          </div>
+          <div class="home-bar dark"></div>
+        </div>
+      </div>
+    </div>
+    <!-- end row 4 -->
+  </body>
+</html>
